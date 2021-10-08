@@ -1,0 +1,61 @@
+package FourAri;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+
+
+public class Create {
+    Expression expression=new Expression();
+    ReversePolishExpression cal=new ReversePolishExpression();
+    HashMap<String,String> map = new HashMap<String,String>();
+    //在当前目录下生成练习题和答案
+    public void cr(int n,int r) throws IOException {
+        BufferedWriter Exercise=new BufferedWriter(new FileWriter(".\\Exercises.txt"));
+        BufferedWriter Answer=new BufferedWriter(new FileWriter(".\\Answers.txt"));
+        for(int i=1;i<n+1;i++){
+            String exps=expression.getexp(r);
+
+            List<String> Repetition1=cal.getcnki(exps);
+            String cnki1=cal.list2String(Repetition1);
+            boolean contains2 =false;
+            if(Repetition1.get(0).equals("+")||Repetition1.get(0).equals("×")) {
+                List<String> Repetition2=Repetition1;
+                String t1=Repetition2.get(1);
+                String t2=Repetition2.get(2);
+                Repetition2.set(1, t2);
+                Repetition2.set(2, t1);
+                String cnki2=cal.list2String(Repetition2);
+                contains2 = map.containsKey(cnki2);
+            }
+            if(i==1) {map.put(cnki1,"");}
+            boolean contains = map.containsKey(cnki1);
+            if(contains==true||contains2==true) {
+                exps=expression.getexp(r);
+                Repetition1=cal.getcnki(exps);
+                cnki1=cal.list2String(Repetition1);
+                contains2 =false;
+                if(Repetition1.get(0).equals("+")||Repetition1.get(0).equals("×")) {
+                    List<String> cnkiexp2=Repetition1;
+                    String t1=cnkiexp2.get(1);
+                    String t2=cnkiexp2.get(2);
+                    cnkiexp2.set(1, t2);
+                    cnkiexp2.set(2, t1);
+                    String cnki2=cal.list2String(cnkiexp2);
+                    contains2 = map.containsKey(cnki2);
+                }
+            }
+            map.put(cnki1,"");
+
+            Fraction answer=cal.calculate(exps);
+            String answers=answer.toString();
+            Exercise.write(i+". "+exps+"\r\n");
+            Answer.write(i+". "+answers+"\r\n");
+        }
+        Exercise.flush();
+        Answer.flush();
+        Exercise.close();
+        Answer.close();
+    }
+
+}
